@@ -44,7 +44,8 @@ def _show_plot(data, plot, ax, title, data_idx=6, split_by='Day', show_ax=True):
 
     _format_ax(ax, title, show_ax)
 
-def show_data(data, data_idx=6, split_by='Day', fig_size=5, colormap='Set3', show_ax=False, title=None, path=None, return_plot=False, verbosity=1):
+def show_data(data, data_idx=None, split_by='Day', fig_size=5, colormap='Set3', show_ax=False, title=None, path=None, return_plot=False, verbosity=1):
+    data_idx is None and (data_idx := np.argmax([True if k.isupper() and not k.isalpha() else False for k in data.keys()]))
     n_plots = len(plots := np.unique(data[split_by]))
     title = to_list(n_plots, title) if title is not None else [f'{split_by} {x}' for x in plots]
     fig, ax, cmap = _make_plot(n_plots, fig_size, colormap)
