@@ -4,8 +4,6 @@ Correspondence: c.fouts25@imperial.ac.uk
 License: Apache 2.0 license
 '''
 
-from ._utils import to_list
+from ._utils import __all__
 
-__all__ = [
-    'to_list'
-]
+__all__ = __all__

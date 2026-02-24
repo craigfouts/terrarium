@@ -4,14 +4,19 @@ Correspondence: c.fouts25@imperial.ac.uk
 License: Apache 2.0 license
 '''
 
+import imageio
 import matplotlib.pyplot as plt
 import numpy as np
+from IPython.display import display, Video
 from matplotlib import colormaps
 from tqdm import tqdm
 from ._utils import to_list
+from .sugar import attrmethod
 
 __all__ = [
-    'show_data'
+    'grab_plot',
+    'show_data',
+    'VideoWriter'
 ]
 
 def _format_ax(ax, title=None, show_ax=True):
@@ -60,3 +65,44 @@ def show_data(data, data_idx=None, split_by='Day', fig_size=5, colormap='Set3', 
         return fig, ax
 
     plt.show()
+
+def grab_plot(close=True, return_tensor=False):
+    (fig := plt.gcf()).canvas.draw()
+    img = np.array(fig.canvas.renderer._renderer)
+    alpha = np.float32(img[..., 3:]*255.)
+    img = np.uint8(255.*(1. - alpha) + img[..., :3]*alpha)
+
+    if close:
+        plt.close()
+
+    if return_tensor:
+        return torch.tensor(img)
+    return img
+
+class VideoWriter:
+    @attrmethod
+    def __init__(self, frame_size=500, frame_rate=30., path='_autoplay.mp4'):
+        self.frames = []
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.save()
+
+        if self.path[-13:] == '_autplay.mp4':
+            self.show()
+
+    def write(self, frame):
+        self.frames.append(frame)
+
+    def save(self):
+        with imageio.imopen(self.path, 'w', plugin='pyav') as out:
+            out.init_video_stream('vp9', fps=self.frame_rate)
+
+            for frame in self.frames:
+                out.write_frame(frame)
+
+    def show(self):
+        out = Video(self.path, width=self.frame_size, height=self.frame_size)
+        display(out)
