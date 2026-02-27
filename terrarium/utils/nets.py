@@ -86,8 +86,7 @@ class Encoder(nn.Module):
 
     def forward(self, X, return_kld=False):
         q = self._q_net(X)
-        m, s_log = self._m_mlp(q), self._s_mlp(q)
-        s_exp = (.5*s_log).exp()
+        m, s_exp = self._m_mlp(q), .5*(s_log := self._s_mlp(q)).exp()
         z = m + s_exp*torch.randn(m.shape, generator=self._state)
 
         if return_kld:

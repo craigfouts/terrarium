@@ -90,7 +90,7 @@ class VideoWriter:
     def __exit__(self, *_):
         self.save()
 
-        if self.path[-13:] == '_autplay.mp4':
+        if self.path[-13:] == '_autoplay.mp4':
             self.show()
 
     def write(self, frame):
