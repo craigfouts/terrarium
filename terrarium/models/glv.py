@@ -52,8 +52,11 @@ class GLV(nn.Module):
 
         return dx
 
-    def forward(self, x, y=None, dt=.1, r=None, A=None):
+    def forward(self, x, y=None, dt=.1, r=None, A=None, train=False):
         x_ = x + self.model(x, r, A)*dt
+
+        if not train:
+            x_ = x_.detach()
 
         if y is not None:
             loss = (d := x_ - y).norm(1) + d.norm(2)
@@ -68,10 +71,10 @@ class GLV(nn.Module):
 
             for i in range(n_steps):
                 if i in Y[1:, 0]:
-                    x_, l = self(x_, Y[t := t + 1, 1:])
+                    x_, l = self(x_, Y[t := t + 1, 1:], train=True)
                     loss += l
                 else:
-                    x_ = self(x_)
+                    x_ = self(x_, train=True)
 
             self.step(loss)
 

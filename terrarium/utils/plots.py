@@ -16,6 +16,7 @@ from .sugar import attrmethod
 __all__ = [
     'grab_plot',
     'show_data',
+    'show_plots',
     'VideoWriter'
 ]
 
@@ -65,6 +66,52 @@ def show_data(data, data_idx=None, split_by='Day', fig_size=5, colormap='Set3', 
         return fig, ax
 
     plt.show()
+
+def _set_alpha(ax, alpha=.1):
+    line_alpha, point_alpha = to_list(2, alpha)
+
+    for line in ax.lines:
+        line.set(alpha=line_alpha)
+
+    for point in ax.collections:
+        point.set(alpha=point_alpha)
+
+    return ax
+
+def _get_labels(ax, title=None, xlabel=None, ylabel=None):
+    if title is None:
+        title = ax.get_title()
+    
+    if xlabel is None:
+        xlabel = ax.get_xlabel()
+
+    if ylabel is None:
+        ylabel = ax.get_ylabel()
+
+    return title, xlabel, ylabel
+
+def show_plots(Y, x=None, scatter=False, color=None, alpha=1., figsize=5, title=None, xlabel=None, ylabel=None, xlim=None, ylim=None, plot=None, opacity=1., return_plot=False):
+    Y = np.atleast_2d(Y)
+
+    if x is None:
+        x = np.arange(Y.shape[1])
+
+    fig, ax = plt.subplots(figsize=to_list(2, figsize)) if plot is None else (*plot,)
+    ax = _set_alpha(ax, opacity)
+
+    for y, s, c, a in zip(Y, *to_list(len(Y), scatter, color, alpha)):
+        ax.scatter(x, y, c=c, alpha=a) if s else ax.plot(x, y, c=c, alpha=a)
+
+    title, xlabel, ylabel = _get_labels(ax, title, xlabel, ylabel)
+    ax.set(title=title, xlabel=xlabel, ylabel=ylabel, xlim=xlim, ylim=ylim)
+
+    if return_plot:
+        plt.close()
+
+        return fig, ax
+
+    if plot is not None:
+        display(fig)
 
 def grab_plot(close=True, return_tensor=False):
     (fig := plt.gcf()).canvas.draw()
