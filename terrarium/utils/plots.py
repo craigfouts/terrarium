@@ -50,23 +50,6 @@ def _show_plot(data, plot, ax, title, data_idx=6, split_by='Day', show_ax=True):
 
     _format_ax(ax, title, show_ax)
 
-def show_data(data, data_idx=None, split_by='Day', fig_size=5, colormap='Set3', show_ax=False, title=None, path=None, return_plot=False, verbosity=1):
-    data_idx is None and (data_idx := np.argmax([True if k.isupper() and not k.isalpha() else False for k in data.keys()]))
-    n_plots = len(plots := np.unique(data[split_by]))
-    title = to_list(n_plots, title) if title is not None else [f'{split_by} {x}' for x in plots]
-    fig, ax, cmap = _make_plot(n_plots, fig_size, colormap)
-
-    for p, a, t in tqdm(zip(plots, ax, title), total=n_plots) if verbosity == 1 else zip(plots, ax, title):
-        _show_plot(data, p, a, t, data_idx, split_by, show_ax)
-
-    fig.tight_layout()
-    path and fig.savefig(path, bbox_inches='tight', transparent=True)
-
-    if return_plot:
-        return fig, ax
-
-    plt.show()
-
 def _set_alpha(ax, alpha=.1):
     line_alpha, point_alpha = to_list(2, alpha)
 
@@ -89,6 +72,23 @@ def _get_labels(ax, title=None, xlabel=None, ylabel=None):
         ylabel = ax.get_ylabel()
 
     return title, xlabel, ylabel
+
+def show_data(data, data_idx=None, split_by='Day', fig_size=5, colormap='Set3', show_ax=False, title=None, path=None, return_plot=False, verbosity=1):
+    data_idx is None and (data_idx := np.argmax([True if k.isupper() and not k.isalpha() else False for k in data.keys()]))
+    n_plots = len(plots := np.unique(data[split_by]))
+    title = to_list(n_plots, title) if title is not None else [f'{split_by} {x}' for x in plots]
+    fig, ax, cmap = _make_plot(n_plots, fig_size, colormap)
+
+    for p, a, t in tqdm(zip(plots, ax, title), total=n_plots) if verbosity == 1 else zip(plots, ax, title):
+        _show_plot(data, p, a, t, data_idx, split_by, show_ax)
+
+    fig.tight_layout()
+    path and fig.savefig(path, bbox_inches='tight', transparent=True)
+
+    if return_plot:
+        return fig, ax
+
+    plt.show()
 
 def show_plots(Y, x=None, scatter=False, color=None, alpha=1., figsize=5, title=None, xlabel=None, ylabel=None, xlim=None, ylim=None, plot=None, opacity=1., return_plot=False):
     Y = np.atleast_2d(Y)
