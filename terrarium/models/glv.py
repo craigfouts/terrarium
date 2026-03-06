@@ -19,7 +19,8 @@ class GLV(nn.Module):
     def __init__(self, optim='adam', *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.log_ = []
+        self.loss_log_ = []
+        self.param_log_ = []
     
     def _build(self, Y, x=None, learning_rate=1e-3):
         n = Y.shape[1] - 1
@@ -29,6 +30,7 @@ class GLV(nn.Module):
 
         self.r_ = nn.Parameter(torch.zeros_like(x), requires_grad=True)
         self.A_ = nn.Parameter(torch.zeros(n, n), requires_grad=True)
+        self.param_log_.append((self.r_.clone().detach(), self.A_.clone().detach()))
         self._optim = OPTIMS[self.optim](self.parameters(), learning_rate)
 
         return self
@@ -37,7 +39,8 @@ class GLV(nn.Module):
         loss.backward()
         self._optim.step()
         self._optim.zero_grad()
-        self.log_.append(loss.item())
+        self.loss_log_.append(loss.item())
+        self.param_log_.append((self.r_.clone().detach(), self.A_.clone().detach()))
 
         return self
 

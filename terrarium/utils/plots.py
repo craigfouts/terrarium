@@ -27,7 +27,7 @@ def _format_ax(ax, title=None, show_ax=True):
 
     return ax
 
-def _make_plot(n_plots=1, fig_size=5, colormap=None):
+def _make_plot(n_plots=1, fig_size=(6, 4), colormap=None):
     fig_size = to_list(2, n_plots*fig_size)
     fig, ax = plt.subplots(1, n_plots, figsize=fig_size)
     (n_plots == 1) and (ax := (ax,))
@@ -73,7 +73,7 @@ def _get_labels(ax, title=None, xlabel=None, ylabel=None):
 
     return title, xlabel, ylabel
 
-def show_data(data, data_idx=None, split_by='Day', fig_size=5, colormap='Set3', show_ax=False, title=None, path=None, return_plot=False, verbosity=1):
+def show_data(data, data_idx=None, split_by='Day', fig_size=(6, 4), colormap='Set3', show_ax=False, title=None, path=None, return_plot=False, verbosity=1):
     data_idx is None and (data_idx := np.argmax([True if k.isupper() and not k.isalpha() else False for k in data.keys()]))
     n_plots = len(plots := np.unique(data[split_by]))
     title = to_list(n_plots, title) if title is not None else [f'{split_by} {x}' for x in plots]
@@ -90,7 +90,7 @@ def show_data(data, data_idx=None, split_by='Day', fig_size=5, colormap='Set3', 
 
     plt.show()
 
-def show_plots(Y, x=None, scatter=False, color=None, alpha=1., figsize=5, title=None, xlabel=None, ylabel=None, xlim=None, ylim=None, plot=None, opacity=1., return_plot=False):
+def show_plots(Y, x=None, scatter=False, color=None, alpha=1., figsize=(6, 4), title=None, xlabel=None, ylabel=None, xlim=None, ylim=None, plot=None, opacity=1., show=True, return_plot=False):
     Y = np.atleast_2d(Y)
 
     if x is None:
@@ -106,11 +106,12 @@ def show_plots(Y, x=None, scatter=False, color=None, alpha=1., figsize=5, title=
     ax.set(title=title, xlabel=xlabel, ylabel=ylabel, xlim=xlim, ylim=ylim)
 
     if return_plot:
-        plt.close()
+        if not show:
+            plt.close()
 
         return fig, ax
 
-    if plot is not None:
+    if show and plot is not None:
         display(fig)
 
 def grab_plot(close=True, return_tensor=False):
