@@ -1,0 +1,252 @@
+---
+title: "Fitting ODEs in Stan (with Python)"
+author: "Tara Hameed (adapted by Craig Fouts)"
+output: 
+  html_document:
+    number_sections: true    
+    toc: true
+    toc_float: true
+bibliography: references.bib  
+date: "2026-03-13"
+mainfont: Arial
+documentclass: article
+geometry: margin=1in
+linestretch: 2
+fontsize: 12pt
+---
+
+# Introduction
+
+This script is intended to be an example of fitting Ordinary Differential Equation (ODE) models using CmdStanPy (Python interface to CmdStan), where Stan is a probabilistic programming language for performing Bayesian inference and CmdStan is its command line interface. Often when modelling we want to be able to quantify the uncertainty of our estimates. Bayesian inference allows us to do this in a principled manner for ODE models. All technical details mentioned here closely follow the [Stan](https://mc-stan.org/docs/stan-users-guide/) [@Stan] user manual and Bayesian Data Analysis textbook [@gelman2013]. For a more detailed explanation on fitting ODEs in Stan, please refer to the [CmdStanPy](https://mc-stan.org/cmdstanpy/) and [Stan](https://mc-stan.org/docs/stan-users-guide/) [@Stan] documentation and user manual.
+
+Before I go through the example, let's import the relevant libraries and set a seed.
+
+```{python, message="FALSE", results="hide"}
+import cmdstanpy
+import arviz as az
+import matplotlib.pyplot as plt
+import numpy as np
+import pyreadr
+from cmdstanpy import CmdStanModel
+from IPython.display import Markdown
+cmdstanpy.install_cmdstan();
+```
+
+```{python}
+seed = 739485
+```
+
+The example in this script is about fitting a simple logistic ODE to some pre-generated fake data. Below, I outline what the simple ODE is ([The Model]), what the fake data looks like ([The Data]), how to fit the ODE to the data ([Fitting the Model] and [Checking Model Fit]), and finally showcase exploring estimated parameters ([Estimated Parameters]).
+
+# The Model
+
+A simple logistic growth model [@verhulst1838] is a popular one-dimensional ODE that is often used for modelling population growth:
+
+$$
+\frac{df}{dt} = \beta f \left( 1 - \frac{f}{K} \right)
+$$
+
+The mean population, $f$, grows over time, $t$, at a growth rate of $\beta$. Growth slows as the population reaches its theoretical limiting level, $K$, often called the carrying capacity.
+
+# The Data
+
+There is some pre-generated fake data in the `logistic_data.Rda` file, which is in the same repository as this script. The data was actually generated using the logistic model and Stan, but, for the purposes of this example, we can imagine that the data, $y$, is the concentration of a population growing over time, $t$, that is recorded in an experiment where we assume the data collection method introduces some observational noise. The aim is to fit the logistic ODE to this collected data, estimate important parameter values, like the growth rate $\beta$, and also quantify the uncertainty of the estimates.
+
+## Visualisation
+
+First, let's read in the data from the `logistic_data.Rda` file:
+
+```{python}
+logistic_data = pyreadr.read_r('logistic_data.Rda')[None]
+Markdown(logistic_data.head().to_markdown(index=False, numalign='center', floatfmt='.6f'))
+```
+
+and then plot the data to explore what it looks like:
+
+```{python}
+plt.grid(alpha=.5)
+plt.scatter(logistic_data['time'], logistic_data['y'], s=100, zorder=2)
+plt.xticks((0., 2.5, 5., 7.5, 10.));
+plt.yticks((0., 2.5, 5., 7.5, 10.));
+plt.xlabel('Time')
+plt.ylabel('y')
+plt.tight_layout()
+```
+
+## Pre-processing
+
+Next, the dataframe needs to be re-formatted to be compatible with Stan because Stan expects the data to be in a particular format:
+
+```{python}
+# Only want to solve the ODE at unique times in Stan to reduce runtime
+logistic_unique_times = np.sort(logistic_data['time'].unique())
+
+# Create a dictionary of data that Stan needs to define the model using the same
+# names as those in the "logistic.stan" file
+stan_logistic_data = {
+    'N': len(logistic_data),
+    'T': len(logistic_unique_times),
+    'y': logistic_data['y'],
+    'time': logistic_unique_times,
+    'time_idx': [np.where(logistic_unique_times == t)[0].item() + 1 for t in logistic_data['time']],
+    'include_likelihood': True
+}
+```
+
+Although not relevant in this simple example, in the Stan model if there are multiple observations at one time point (like multiple replicates) the ODE is only solved once and so the data list is set up to reflect this.
+
+# Fitting the Model{.tabset}
+
+## Python code
+
+To fit the logistic ODE using Stan and estimate parameters, a Stan file needs to be created. One has already been created and is in this repository under the name `logistic.stan`. A copy of the file is under the "Stan code" tab so that you can easily refer to the relevant sections of the Stan model.
+
+In the Stan file, the desired likelihood and priors can be specified. One of the simplest **likelihoods** to use is a Gaussian, where we assume that our data $y_t$ at time $t$ is normally distributed around our ODE solution, $f(t)$, with some noise that has scale $\sigma$:
+
+$$
+y_t \sim \text{N}(f(t), \sigma);
+$$
+
+In the Stan file (`logistic.stan`, see "Stan code" tab), the above is written in the `model` block as follows, where `mu` is the ODE solution:
+
+```
+y ~ normal(mu[time_idx, 1], sigma)
+```
+
+We can also assume the following **priors**:
+
+$$
+\begin{align*}
+    k &\sim \text{N}^+(10, 1) \\
+    \beta &\sim \text{N}^+(0, 1) \\
+    \sigma &\sim \text{N}^+(0, 1) \\
+    f_0 &\sim \text{N}^+(0, 1)
+\end{align*}
+$$
+
+by writing the following in `logistic.stan`'s `model` block:
+
+```
+K ~ normal(10, 1);
+beta ~ std_normal();
+sigma ~ std_normal();
+y0 ~ std_normal();
+```
+
+These priors are chosen arbitrarily for this example, but prior choice is important! Further information on choosing priors can be found in [@gelman2020] or [@gelman2013].
+
+Finally, to fit the model we only need to call the following command:
+
+```{python, results="hide"}
+fit_logistic = CmdStanModel(stan_file="logistic.stan").sample(stan_logistic_data, chains=4, seed=seed)
+```
+
+Here, I've hidden the output as it is long but Stan will output a progress bar of sampling from the posterior with the time taken for sampling given at the end of the output. Any warnings about convergence will also be given here.
+
+## Stan code
+
+In this tab is a copy of the `logistic.stan` file used to fit the logistic ODE in the "Python code" tab. It has six different "blocks": (**1**) `functions`, where the ODE is specified, (**2**) `data`, where the input data is specified (notice how the names in our dictionary `stan_logistic_data` match this block), (**3**) `parameters` for the free parameters in the model, (**4**) `transformed parameters`, where we solve the ODE, (**5**) `model` that specifies the prior and likelihood, and, finally, (**6**) `generated quantities`, where we simulate ODE solutions and model samples from the fitted model.
+
+```
+functions {
+    vector logistic(real t, vector y, real beta, real K) {
+        vector[1] dydt;
+
+        dydt[1] = beta*y[1]*(1 - y[1]/K);
+
+        return dydt;
+    }
+}
+
+data {
+    int<lower=0> N;  // Number of data points
+    int<lower=0> T;  // Number of time points
+    vector[N] y;  // Input data
+    array[T] real time;
+    array[N] int<lower=1, upper=T> time_idx;  // Index of time vector in data
+    int<lower=0, upper=1> include_likelihood;
+}
+
+parameters {
+    real<lower=0> K;  // Carrying capacity
+    real<lower=0> beta;  // Growth rate
+    real<lower=0> y0;  // Initial condition
+    real<lower=0> sigma;  // Noise scale
+}
+
+transformed parameters {
+    // Solve ODE
+    array[T - 1] vector[1] mu_hat = ode_rk45(logistic, to_vector({y0}), time[1], time[2:T], beta, K);
+    array[T] vector[1] mu;
+
+    mu[1, 1] = y0;
+    mu[2:T, 1] = mu_hat[, 1];
+}
+
+model {
+    K ~ normal(10, 1);
+    beta ~ std_normal();
+    sigma ~ std_normal();
+    y0 ~ std_normal();
+
+    if (include_likelihood) y ~ normal(mu[time_idx, 1], sigma);
+}
+
+generated quantities {
+   array[N] real f_reps = mu[time_idx, 1];  // Posterior samples of ODE solution
+   array[N] real y_reps = normal_rng(mu[time_idx, 1], sigma);  // Posterior predictive
+}
+```
+
+# Checking Model Fit
+
+In the above `sample` method call, the keyword argument `chains` was set to be `chains=4` to specify that we want to run 4 chains independently. This is mainly done so that we can assess if the chains have converged to (what we assume to be) the true posterior distribution.
+
+In reality, we cannot know if the chains have converged to the actual true posterior as we do not know what the true posterior is. Instead, since of non-convergence are monitored. One way to do this is by plotting the posterior samples over iterations for each chain ("trace plot") to make sure that the chains are well **mixed** and **stationary**. The chains should all converge to the same posterior (be well *mixed*) and the chains should actually converge to a distribution and stay there (be *stationary*) [@gelman2013]. If the chains are not mixed or not stationary (like if the chains' sampling paths appear to be completely distinct or drift, for example), these are signs of non-convergence and samples taken from these chains should not be used further.
+
+```{python}
+az.plot_trace(fit_logistic, var_names=('K', 'beta', 'y0', 'sigma'), compact=False, legend=True);
+plt.tight_layout()
+```
+
+The traceplots look OK. However, visual assessment can be subjective so convergence is also assessed using the Gelman-Rubin metric $\widehat{R}$ [@vehtari2021], which can be thought of as a numerical value summarising the above. Usually, a value of $\widehat{R}$ > 1.01 is used as a heuristic to diagnose lack of convergence.
+
+```{python}
+Markdown(fit_logistic.summary().head()[1:].to_markdown(numalign='center', floatfmt='.4f'))
+```
+
+The $\widehat{R}$ values listed in the last column of the above table look to be < 1.01!
+
+# Plotting Model Fit
+
+During fitting, it was assumed that the data, $y_t$, are normally distributed around the ODE solution, $f(t)$, with some noise that has scale $\sigma$ at time $t$. Since there are no signs of non-convergence so far, we can plot posterior samples of $f(t)$ to explore if they are similar to the mean data and thus check that our fitted model can at least visually capture the general trends of the data:
+
+```{python}
+keys = [f'f_reps[{i}]' for i in range(1, 22)]
+sample_draws = np.random.randint(0, 4000, 100)
+f = fit_logistic.draws_pd()[keys].loc[sample_draws].T.to_numpy()
+plt.plot(np.arange(len(f))/2, f, alpha=.5, linewidth=.5, zorder=2)
+plt.grid(alpha=.5)
+plt.scatter(logistic_data['time'], logistic_data['y'], c='black', s=10, zorder=2)
+plt.xticks((0., 2.5, 5., 7.5, 10.));
+plt.yticks((0., 2.5, 5., 7.5, 10.));
+plt.xlabel('Time')
+plt.ylabel('f')
+plt.tight_layout()
+```
+
+Here, the lines are the ODE, $f$, that are solved using samples from the posterior, $p(\theta | y)$ and the dots show the data, $y$.
+
+We can also plot samples from the posterior predictive distribution, $p(y^{\rm rep} | y)$ [@gelman2013]:
+
+$$
+p(y^{\rm rep} | y) = \int p(y^{\rm rep} | \theta)p(\theta | y) d\theta
+$$
+
+to check how well our entire model, with assumed priors and likelihood, fits to the data. The fitted model should be able to generate data under the posterior predictive distribution that resembles the observed data [@gelman2013]:
+
+```{python}
+
+```
+
+# References

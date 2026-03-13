@@ -1,0 +1,589 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  12pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+  \setmainfont[]{Arial}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage{setspace}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Fitting ODEs in Stan (with Python)},
+  pdfauthor={Tara Hameed (adapted by Craig Fouts)},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Fitting ODEs in Stan (with Python)}
+\author{Tara Hameed (adapted by Craig Fouts)}
+\date{2026-03-13}
+
+\begin{document}
+\maketitle
+
+\setstretch{2}
+\section{Introduction}\label{introduction}
+
+This script is intended to be an example of fitting Ordinary
+Differential Equation (ODE) models using CmdStanPy (Python interface to
+CmdStan), where Stan is a probabilistic programming language for
+performing Bayesian inference and CmdStan is its command line interface.
+Often when modelling we want to be able to quantify the uncertainty of
+our estimates. Bayesian inference allows us to do this in a principled
+manner for ODE models. All technical details mentioned here closely
+follow the \href{https://mc-stan.org/docs/stan-users-guide/}{Stan} (Stan
+Development Team 2025) user manual and Bayesian Data Analysis textbook
+(Gelman et al. 2013). For a more detailed explanation on fitting ODEs in
+Stan, please refer to the
+\href{https://mc-stan.org/cmdstanpy/}{CmdStanPy} and
+\href{https://mc-stan.org/docs/stan-users-guide/}{Stan} (Stan
+Development Team 2025) documentation and user manual.
+
+Before I go through the example, let's import the relevant libraries and
+set a seed.
+
+The example in this script is about fitting a simple logistic ODE to
+some pre-generated fake data. Below, I outline what the simple ODE is
+({[}The ODE{]}), what the fake data looks like (\hyperref[the-data]{The
+Data}), how to fit the ODE to the data
+(\hyperref[fitting-the-model]{Fitting the Model} and
+\hyperref[checking-model-fit]{Checking Model Fit}), and finally showcase
+exploring estimated parameters ({[}Estimated Parameters{]}).
+
+\section{The Model}\label{the-model}
+
+A simple logistic growth model (Verhulst 1838) is a popular
+one-dimensional ODE that is often used for modelling population growth:
+
+\[
+\frac{df}{dt} = \beta f \left( 1 - \frac{f}{K} \right)
+\]
+
+The mean population, \(f\), grows over time, \(t\), at a growth rate of
+\(\beta\). Growth slows as the population reaches its theoretical
+limiting level, \(K\), often called the carrying capacity.
+
+\section{The Data}\label{the-data}
+
+There is some pre-generated fake data in the \texttt{logistic\_data.Rda}
+file, which is in the same repository as this script. The data was
+actually generated using the logistic model and Stan, but, for the
+purposes of this example, we can imagine that the data, \(y\), is the
+concentration of a population growing over time, \(t\), that is recorded
+in an experiment where we assume the data collection method introduces
+some observational noise. The aim is to fit the logistic ODE to this
+collected data, estimate important parameter values, like the growth
+rate \(\beta\), and also quantify the uncertainty of the estimates.
+
+\subsection{Visualisation}\label{visualisation}
+
+First, let's read in the data from the \texttt{logistic\_data.Rda} file:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{logistic\_data }\OperatorTok{=}\NormalTok{ pyreadr.read\_r(}\StringTok{\textquotesingle{}logistic\_data.Rda\textquotesingle{}}\NormalTok{)[}\VariableTok{None}\NormalTok{]}
+\NormalTok{Markdown(logistic\_data.head().to\_markdown(index}\OperatorTok{=}\VariableTok{False}\NormalTok{, numalign}\OperatorTok{=}\StringTok{\textquotesingle{}center\textquotesingle{}}\NormalTok{, floatfmt}\OperatorTok{=}\StringTok{\textquotesingle{}.6f\textquotesingle{}}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}cc@{}}
+\toprule\noalign{}
+y & time \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0.795570 & 0.000000 \\
+0.174560 & 0.500000 \\
+0.774322 & 1.000000 \\
+3.083851 & 1.500000 \\
+2.163227 & 2.000000 \\
+\end{longtable}
+}
+
+and then plot the data to explore what it looks like:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plt.grid(alpha}\OperatorTok{=}\FloatTok{.5}\NormalTok{)}
+\NormalTok{plt.scatter(logistic\_data[}\StringTok{\textquotesingle{}time\textquotesingle{}}\NormalTok{], logistic\_data[}\StringTok{\textquotesingle{}y\textquotesingle{}}\NormalTok{], s}\OperatorTok{=}\DecValTok{100}\NormalTok{, zorder}\OperatorTok{=}\DecValTok{2}\NormalTok{)}
+\NormalTok{plt.xticks((}\FloatTok{0.}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\FloatTok{5.}\NormalTok{, }\FloatTok{7.5}\NormalTok{, }\FloatTok{10.}\NormalTok{))}\OperatorTok{;}
+\NormalTok{plt.yticks((}\FloatTok{0.}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\FloatTok{5.}\NormalTok{, }\FloatTok{7.5}\NormalTok{, }\FloatTok{10.}\NormalTok{))}\OperatorTok{;}
+\NormalTok{plt.xlabel(}\StringTok{\textquotesingle{}Time\textquotesingle{}}\NormalTok{)}
+\NormalTok{plt.ylabel(}\StringTok{\textquotesingle{}y\textquotesingle{}}\NormalTok{)}
+\NormalTok{plt.tight\_layout()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{01_fit_ode_files/figure-latex/unnamed-chunk-2-173.pdf}}
+
+\subsection{Pre-processing}\label{pre-processing}
+
+Next, the dataframe needs to be re-formatted to be compatible with Stan
+because Stan expects the data to be in a particular format:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Only want to solve the ODE at unique times in Stan to reduce runtime}
+\NormalTok{logistic\_unique\_times }\OperatorTok{=}\NormalTok{ np.sort(logistic\_data[}\StringTok{\textquotesingle{}time\textquotesingle{}}\NormalTok{].unique())}
+
+\CommentTok{\# Create a dictionary of data that Stan needs to define the model using the same}
+\CommentTok{\# names as those in the "logistic.stan" file}
+\NormalTok{stan\_logistic\_data }\OperatorTok{=}\NormalTok{ \{}
+    \StringTok{\textquotesingle{}N\textquotesingle{}}\NormalTok{: }\BuiltInTok{len}\NormalTok{(logistic\_data),}
+    \StringTok{\textquotesingle{}T\textquotesingle{}}\NormalTok{: }\BuiltInTok{len}\NormalTok{(logistic\_unique\_times),}
+    \StringTok{\textquotesingle{}y\textquotesingle{}}\NormalTok{: logistic\_data[}\StringTok{\textquotesingle{}y\textquotesingle{}}\NormalTok{],}
+    \StringTok{\textquotesingle{}time\textquotesingle{}}\NormalTok{: logistic\_unique\_times,}
+    \StringTok{\textquotesingle{}time\_idx\textquotesingle{}}\NormalTok{: [np.where(logistic\_unique\_times }\OperatorTok{==}\NormalTok{ t)[}\DecValTok{0}\NormalTok{].item() }\OperatorTok{+} \DecValTok{1} \ControlFlowTok{for}\NormalTok{ t }\KeywordTok{in}\NormalTok{ logistic\_data[}\StringTok{\textquotesingle{}time\textquotesingle{}}\NormalTok{]],}
+    \StringTok{\textquotesingle{}include\_likelihood\textquotesingle{}}\NormalTok{: }\VariableTok{True}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Although not relevant in this simple example, in the Stan model if there
+are multiple observations at one time point (like multiple replicates)
+the ODE is only solved once and so the data list is set up to reflect
+this.
+
+\section{Fitting the Model}\label{fitting-the-model}
+
+\subsection{Python code}\label{python-code}
+
+To fit the logistic ODE using Stan and estimate parameters, a Stan file
+needs to be created. One has already been created and is in this
+repository under the name \texttt{logistic.stan}. A copy of the file is
+under the ``Stan code'' tab so that you can easily refer to the relevant
+sections of the Stan model.
+
+In the Stan file, the desired likelihood and priors can be specified.
+One of the simplest \textbf{likelihoods} to use is a Gaussian, where we
+assume that our data \(y_t\) at time \(t\) is normally distributed
+around our ODE solution, \(f(t)\), with some noise that has scale
+\(\sigma\):
+
+\[
+y_t \sim \text{N}(f(t), \sigma);
+\]
+
+In the Stan file (\texttt{logistic.stan}, see ``Stan code'' tab), the
+above is written in the \texttt{model} block as follows, where
+\texttt{mu} is the ODE solution:
+
+\begin{verbatim}
+y ~ normal(mu[time_idx, 1], sigma)
+\end{verbatim}
+
+We can also assume the following \textbf{priors}:
+
+\begin{align*}
+    k &\sim \text{N}^+(10, 1) \\
+    \beta &\sim \text{N}^+(0, 1) \\
+    \sigma &\sim \text{N}^+(0, 1) \\
+    f_0 &\sim \text{N}^+(0, 1)
+\end{align*}
+
+by writing the following in \texttt{logistic.stan}'s \texttt{model}
+block:
+
+\begin{verbatim}
+K ~ normal(10, 1);
+beta ~ std_normal();
+sigma ~ std_normal();
+y0 ~ std_normal();
+\end{verbatim}
+
+These priors are chosen arbitrarily for this example, but prior choice
+is important! Further information on choosing priors can be found in
+(Gelman et al. 2020) or (Gelman et al. 2013).
+
+Finally, to fit the model we only need to call the following command:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit\_logistic }\OperatorTok{=}\NormalTok{ CmdStanModel(stan\_file}\OperatorTok{=}\StringTok{"logistic.stan"}\NormalTok{).sample(stan\_logistic\_data, chains}\OperatorTok{=}\DecValTok{4}\NormalTok{, seed}\OperatorTok{=}\NormalTok{seed)}
+\end{Highlighting}
+\end{Shaded}
+
+Here, I've hidden the output as it is long but Stan will output a
+progress bar of sampling from the posterior with the time taken for
+sampling given at the end of the output. Any warnings about convergence
+will also be given here.
+
+\subsection{Stan code}\label{stan-code}
+
+In this tab is a copy of the \texttt{logistic.stan} file used to fit the
+logistic ODE in the ``Python code'' tab. It has six different
+``blocks'': (\textbf{1}) \texttt{functions}, where the ODE is specified,
+(\textbf{2}) \texttt{data}, where the input data is specified (notice
+how the names in our dictionary \texttt{stan\_logistic\_data} match this
+block), (\textbf{3}) \texttt{parameters} for the free parameters in the
+model, (\textbf{4}) \texttt{transformed\ parameters}, where we solve the
+ODE, (\textbf{5}) \texttt{model} that specifies the prior and
+likelihood, and, finally, (\textbf{6}) \texttt{generated\ quantities},
+where we simulate ODE solutions and model samples from the fitted model.
+
+\begin{verbatim}
+functions {
+    vector logistic(real t, vector y, real beta, real K) {
+        vector[1] dydt;
+
+        dydt[1] = beta*y[1]*(1 - y[1]/K);
+
+        return dydt;
+    }
+}
+
+data {
+    int<lower=0> N;  // Number of data points
+    int<lower=0> T;  // Number of time points
+    vector[N] y;  // Input data
+    array[T] real time;
+    array[N] int<lower=1, upper=T> time_idx;  // Index of time vector in data
+    int<lower=0, upper=1> include_likelihood;
+}
+
+parameters {
+    real<lower=0> K;  // Carrying capacity
+    real<lower=0> beta;  // Growth rate
+    real<lower=0> y0;  // Initial condition
+    real<lower=0> sigma;  // Noise scale
+}
+
+transformed parameters {
+    // Solve ODE
+    array[T - 1] vector[1] mu_hat = ode_rk45(logistic, to_vector({y0}), time[1], time[2:T], beta, K);
+    array[T] vector[1] mu;
+
+    mu[1, 1] = y0;
+    mu[2:T, 1] = mu_hat[, 1];
+}
+
+model {
+    K ~ normal(10, 1);
+    beta ~ std_normal();
+    sigma ~ std_normal();
+    y0 ~ std_normal();
+
+    if (include_likelihood) y ~ normal(mu[time_idx, 1], sigma);
+}
+
+generated quantities {
+   array[N] real f_reps = mu[time_idx, 1];  // Posterior samples of ODE solution
+   array[N] real y_reps = normal_rng(mu[time_idx, 1], sigma);  // Posterior predictive
+}
+\end{verbatim}
+
+\section{Checking Model Fit}\label{checking-model-fit}
+
+In the above \texttt{sample} method call, the keyword argument
+\texttt{chains} was set to be \texttt{chains=4} to specify that we want
+to run 4 chains independently. This is mainly done so that we can assess
+if the chains have converged to (what we assume to be) the true
+posterior distribution.
+
+In reality, we cannot know if the chains have converged to the actual
+true posterior as we do not know what the true posterior is. Instead,
+since of non-convergence are monitored. One way to do this is by
+plotting the posterior samples over iterations for each chain (``trace
+plot'') to make sure that the chains are well \textbf{mixed} and
+\textbf{stationary}. The chains should all converge to the same
+posterior (be well \emph{mixed}) and the chains should actually converge
+to a distribution and stay there (be \emph{stationary}) (Gelman et al.
+2013). If the chains are not mixed or not stationary (like if the
+chains' sampling paths appear to be completely distinct or drift, for
+example), these are signs of non-convergence and samples taken from
+these chains should not be used further.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{az.plot\_trace(fit\_logistic, var\_names}\OperatorTok{=}\NormalTok{(}\StringTok{\textquotesingle{}K\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}beta\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}y0\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}sigma\textquotesingle{}}\NormalTok{), compact}\OperatorTok{=}\VariableTok{False}\NormalTok{, legend}\OperatorTok{=}\VariableTok{True}\NormalTok{)}\OperatorTok{;}
+\NormalTok{plt.tight\_layout()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{01_fit_ode_files/figure-latex/unnamed-chunk-5-175.pdf}}
+
+The traceplots look OK. However, visual assessment can be subjective so
+convergence is also assessed using the Gelman-Rubin metric
+\(\widehat{R}\) (Vehtari et al. 2021), which can be thought of as a
+numerical value summarising the above. Usually, a value of
+\(\widehat{R}\) \textgreater{} 1.01 is used as a heuristic to diagnose
+lack of convergence.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Markdown(fit\_logistic.summary().head()[}\DecValTok{1}\NormalTok{:].to\_markdown(numalign}\OperatorTok{=}\StringTok{\textquotesingle{}center\textquotesingle{}}\NormalTok{, floatfmt}\OperatorTok{=}\StringTok{\textquotesingle{}.4f\textquotesingle{}}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.0609}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.0783}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.0696}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.0870}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.0696}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.0696}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.0783}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.0783}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.1043}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.1043}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.1217}}
+  >{\centering\arraybackslash}p{(\linewidth - 22\tabcolsep) * \real{0.0783}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mean
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+MCSE
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+StdDev
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+MAD
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+5\%
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+50\%
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+95\%
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+ESS\_bulk
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+ESS\_tail
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+ESS\_bulk/s
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+R\_hat
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+K & 10.0740 & 0.0187 & 0.9852 & 0.9857 & 8.4813 & 10.0676 & 11.7159 &
+2800.6100 & 2563.5700 & 3252.7400 & 1.0025 \\
+beta & 0.3363 & 0.0015 & 0.0602 & 0.0568 & 0.2485 & 0.3309 & 0.4406 &
+1726.8500 & 1928.6200 & 2005.6300 & 1.0013 \\
+y0 & 0.9293 & 0.0069 & 0.2948 & 0.2931 & 0.4808 & 0.9128 & 1.4508 &
+1810.9300 & 1845.1600 & 2103.2800 & 1.0022 \\
+sigma & 1.3199 & 0.0045 & 0.2131 & 0.2061 & 1.0226 & 1.2931 & 1.7009 &
+2287.8600 & 2043.6700 & 2657.2100 & 1.0005 \\
+\end{longtable}
+}
+
+The \(\widehat{R}\) values listed in the last column of the above table
+look to be \textless{} 1.01!
+
+\section{Plotting Model Fit}\label{plotting-model-fit}
+
+During fitting, it was assumed that the data, \(y_t\), are normally
+distributed around the ODE solution, \(f(t)\), with some noise that has
+scale \(\sigma\) at time \(t\). Since there are no signs of
+non-convergence so far, we can plot posterior samples of \(f(t)\) to
+explore if they are similar to the mean data and thus check that our
+fitted model can at least visually capture the general trends of the
+data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{keys }\OperatorTok{=}\NormalTok{ [}\SpecialStringTok{f\textquotesingle{}f\_reps[}\SpecialCharTok{\{}\NormalTok{i}\SpecialCharTok{\}}\SpecialStringTok{]\textquotesingle{}} \ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{22}\NormalTok{)]}
+\NormalTok{sample\_draws }\OperatorTok{=}\NormalTok{ np.random.randint(}\DecValTok{0}\NormalTok{, }\DecValTok{4000}\NormalTok{, }\DecValTok{100}\NormalTok{)}
+\NormalTok{f }\OperatorTok{=}\NormalTok{ fit\_logistic.draws\_pd()[keys].loc[sample\_draws].T.to\_numpy()}
+\NormalTok{plt.plot(np.arange(}\BuiltInTok{len}\NormalTok{(f))}\OperatorTok{/}\DecValTok{2}\NormalTok{, f, alpha}\OperatorTok{=}\FloatTok{.5}\NormalTok{, linewidth}\OperatorTok{=}\FloatTok{.5}\NormalTok{, zorder}\OperatorTok{=}\DecValTok{2}\NormalTok{)}
+\NormalTok{plt.grid(alpha}\OperatorTok{=}\FloatTok{.5}\NormalTok{)}
+\NormalTok{plt.scatter(logistic\_data[}\StringTok{\textquotesingle{}time\textquotesingle{}}\NormalTok{], logistic\_data[}\StringTok{\textquotesingle{}y\textquotesingle{}}\NormalTok{], c}\OperatorTok{=}\StringTok{\textquotesingle{}black\textquotesingle{}}\NormalTok{, s}\OperatorTok{=}\DecValTok{10}\NormalTok{, zorder}\OperatorTok{=}\DecValTok{2}\NormalTok{)}
+\NormalTok{plt.xticks((}\FloatTok{0.}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\FloatTok{5.}\NormalTok{, }\FloatTok{7.5}\NormalTok{, }\FloatTok{10.}\NormalTok{))}\OperatorTok{;}
+\NormalTok{plt.yticks((}\FloatTok{0.}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\FloatTok{5.}\NormalTok{, }\FloatTok{7.5}\NormalTok{, }\FloatTok{10.}\NormalTok{))}\OperatorTok{;}
+\NormalTok{plt.xlabel(}\StringTok{\textquotesingle{}Time\textquotesingle{}}\NormalTok{)}
+\NormalTok{plt.ylabel(}\StringTok{\textquotesingle{}f\textquotesingle{}}\NormalTok{)}
+\NormalTok{plt.tight\_layout()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{01_fit_ode_files/figure-latex/unnamed-chunk-7-177.pdf}}
+
+Here, the lines are the ODE, \(f\), that are solved using samples from
+the posterior, \(p(\theta | y)\) and the dots show the data, \(y\).
+
+We can also plot samples from the posterior predictive distribution,
+\(p(y^{\rm rep} | y)\) (Gelman et al. 2013):
+
+\[
+p(y^{\rm rep} | y) = \int p(y^{\rm rep} | \theta)p(\theta | y) d\theta
+\]
+
+to check how well our entire model, with assumed priors and likelihood,
+fits to the data. The fitted model should be able to generate data under
+the posterior predictive distribution that resembles the observed data
+(Gelman et al. 2013):
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\protect\phantomsection\label{refs}
+\begin{CSLReferences}{1}{1}
+\bibitem[\citeproctext]{ref-gelman2013}
+Gelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki
+Vehtari, and Donald B. Rubin. 2013. \emph{Bayesian Data Analysis, Third
+Edition}. In \emph{Bayesian Data Analysis, Third Edition}. Chapman;
+Hall/CRC.
+
+\bibitem[\citeproctext]{ref-gelman2020}
+Gelman, Andrew, Aki Vehtari, Daniel Simpson, et al. 2020. {``Bayesian
+Workflow.''} \emph{arXiv Preprint arXiv:2011.01808}.
+
+\bibitem[\citeproctext]{ref-Stan}
+Stan Development Team. 2025. \emph{Stan Modeling Language Users Guide
+and Reference Manual, Version 2.32}. \url{https://mc-stan.org}.
+
+\bibitem[\citeproctext]{ref-vehtari2021}
+Vehtari, Aki, Andrew Gelman, Daniel Simpson, Bob Carpenter, and
+Paul-Christian Bürkner. 2021. {``Rank-Normalization, Folding, and
+Localization: An Improved r ̂ for Assessing Convergence of MCMC (with
+Discussion).''} \emph{Bayesian Analysis} 16 (2): 667--718.
+
+\bibitem[\citeproctext]{ref-verhulst1838}
+Verhulst, Pierre-François. 1838. {``Notice Sur La Loi Que La Population
+Suit Dans Son Accroissement.''} \emph{Correspondence Mathematique Et
+Physique} 10: 113--29.
+
+\end{CSLReferences}
+
+\end{document}
