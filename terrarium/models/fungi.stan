@@ -1,3 +1,21 @@
+// data {
+//     int<lower=0> N_x;  // Number of observed data points
+//     int<lower=0> N_z;  // Number of predictions
+//     int<lower=0> N_m;  // Number of missing data points
+//     int<lower=0> N_b;  // Number of blank data points
+//     int<lower=0> N_e;  // Number of expressed data points
+//     array[N_x] int<lower=1, upper=N_x + N_z + N_m> x_idx;  // Training index
+//     array[N_z] int<lower=1, upper=N_x + N_z + N_m> z_idx;  // Testing index
+//     array[N_m] int<lower=1, upper=N_x + N_z + N_m> m_idx;  // Missing index
+//     array[N_b] int<lower=1, upper=N_x + N_z + N_m> b_idx;  // Blank index
+//     array[N_e] int<lower=1, upper=N_x + N_z + N_m> e_idx;  // Expressed index
+//     vector[N_x + N_z + N_m] IC;
+//     vector[N_x] X;
+//     vector[N_z] Z;
+//     vector[N_x + N_z + N_m] t;
+//     real mu0;
+// }
+
 //
 // Latent logistic function with delay in beginning growth modelled with multiplicative noise
 //
